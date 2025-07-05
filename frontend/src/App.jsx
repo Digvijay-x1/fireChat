@@ -9,10 +9,12 @@ import CallPage from "./pages/CallPage";
 import ChatPage from "./pages/ChatPage";
 import PageLoader from "./components/PageLoader";
 import useAuthUser from "./hooks/useAuthUser";
+import Layout from "./components/Layout";
+import { useThemeStore } from "./store/useThemeStore";
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
-
+  const { theme } = useThemeStore();
   if (isLoading) return <PageLoader />;
 
   const isAuthenticated = Boolean(authUser);
@@ -20,70 +22,82 @@ const App = () => {
   const isOnboarded = authUser?.isOnboarded;
 
   return (
-    <Routes>
-      <Route
-        path="/home"
-        element={
-          isAuthenticated && isOnboarded ? (
-            <HomePage />
-          ) : (
-            <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-          )
-        }
-      />
-      <Route
-        path="/onboarding"
-        element={
-          isAuthenticated ? (
-            isOnboarded ? (
-              <Navigate to="/home" />
+    <div className="h-screen" data-theme={theme}>
+      <Routes>
+        <Route
+          path="/home"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <HomePage />
+              </Layout>
             ) : (
-              <OnboardingPage />
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
             )
-          ) : <Navigate to="/login" />
-        }
-      />
-      <Route
-        path="/notification"
-        element={
-          isAuthenticated ? <NotificationPage /> : <Navigate to="/login" />
-        }
-      />
-      <Route
-        path="/signup"
-        element={
-          !isAuthenticated ? (
-            <SignUpPage />
-          ) : (
-            <Navigate to={isOnboarded ? "/home" : "/onboarding"} />
-          )
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          !isAuthenticated ? (
-            <LoginPage />
-          ) : (
-            <Navigate to={isOnboarded ? "/home" : "/onboarding"} />
-          )
-        }
-      />
-      <Route
-        path="/call"
-        element={isAuthenticated ? <CallPage /> :  <Navigate to="/login" />}
-      />
-      <Route
-        path="/chat"
-        element={isAuthenticated ? <ChatPage /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="*"
-        element={
-          isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />
-        }
-      />
-    </Routes>
+          }
+        />
+        <Route
+          path="/onboarding"
+          element={
+            isAuthenticated ? (
+              isOnboarded ? (
+                <Navigate to="/home" />
+              ) : (
+                <OnboardingPage />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            isAuthenticated ? (
+              <Layout showSidebar={true}>
+                <NotificationPage />
+              </Layout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            !isAuthenticated ? (
+              <SignUpPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/home" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            !isAuthenticated ? (
+              <LoginPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/home" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/call"
+          element={isAuthenticated ? <CallPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/chat"
+          element={isAuthenticated ? <ChatPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />
+          }
+        />
+      </Routes>
+    </div>
   );
 };
 
