@@ -3,7 +3,6 @@ import { protectRoute } from "../middleware/auth.middleware.js";;
 import { getRecommendedUsers, getMyFriends, sendFriendRequest , acceptFriendRequest , getFriendRequests , getOutgoingFriendRequests } from "../controllers/user.controller.js";
 const router = express.Router();
 
-router.use(protectRoute);
 
 router.get("/", protectRoute, getRecommendedUsers);
 router.get("/friends", protectRoute, getMyFriends);
